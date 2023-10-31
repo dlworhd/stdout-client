@@ -18,7 +18,7 @@ function SignUp() {
             return;
         }
 
-        instance.post("/api/users", {
+        instance.post("/v1/users", {
                 username: username,
                 password: password,
                 nickname: nickname,

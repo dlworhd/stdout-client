@@ -1,11 +1,5 @@
 
-import axios, { AxiosError } from "axios";
-import { useDispatch } from "react-redux";
-import { logout } from "../store/authSlice";
-import { useNavigate } from "react-router-dom";
-
-
-console.log(process.env.REACT_APP_BASE_URL);
+import axios from "axios";
 
 const instance = axios.create({
     baseURL: process.env.REACT_APP_BASE_URL, // 기본 요청 URL 설정

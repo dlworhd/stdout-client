@@ -161,4 +161,7 @@ declare global {
     }
   }
   
-  export default new ChannelService();
+  const ChService = new ChannelService();
+
+
+  export default ChService;

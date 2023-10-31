@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import instance from "../util/CustomAxios";
 import { useInView } from "react-intersection-observer";
-import dthumbnail from '../../src/images/default-thumbnail.png';
-interface Feed {
+import dthumbnail from "../../src/images/default-thumbnail.png";
+interface FeedType {
     id: number;
     channelName: string;
     channelLink: string;
@@ -19,57 +19,55 @@ interface FeedProps {
     type: string;
 }
 
-function Feed({type = 'ALL'}: FeedProps):React.ReactElement {
-    const [feeds, setFeeds] = useState<Feed[]>([]);
+function Feed({ type = "ALL" }: FeedProps): React.ReactElement {
+    const size = 6;
     const [page, setPage] = useState(0);
-    const [size, setSize] = useState(12);
+    const [feeds, setFeeds] = useState<FeedType[]>([]);
     const [ref, inView] = useInView();
-    const defaultDescription = '궁금하시다면 링크를 클릭해보세요!';
-
-    const fetchFeeds = () => {
-        instance
-        .get(`/api/feeds?size=${size}&page=${page}&type=${type.toString()}`)
-        .then(async (response) => {
-            const feeds = response.data.content;
-            setFeeds((prevfeeds) => [...prevfeeds, ...feeds]);
-            setPage(page + 1)
-        });
-    }
+    const defaultDescription = "궁금하시다면 링크를 클릭해보세요!";
 
     useEffect(() => {
-        // inView가 true 일때만 실행한다.
-        if (inView) {
-          // 실행할 함수
-          fetchFeeds();
+        const fetchFeeds = (pageNumber: number) => {
+            instance
+                .get(
+                    `/v1/feeds?size=${size}&page=${pageNumber}&type=${type.toString()}`
+                )
+                .then((response) => {
+                    console.log(response);
+                    const newFeeds = response.data.content;
+                    setFeeds((prevFeeds) => [...prevFeeds, ...newFeeds]);
+                    setPage(pageNumber + 1);
+                });
+        };
+        if (inView && page === 0) {
+            // 초기 로딩 시에만 실행
+            fetchFeeds(page);
+        } else if (inView && page > 0) {
+            // 스크롤 시에 실행
+            fetchFeeds(page);
         }
-        
-      }, [inView]);
-
-    useEffect(() => {
-        instance
-            .get(`/api/feeds?size=${size}&page=${page}&type=${type}`)
-            .then(async (response) => {
-                const feeds = response.data.content;
-                setFeeds(feeds);
-            });
-    }, []);
-
+    }, [inView, page, type]);
     const handleClick = (url: string) => () => {
-
-        window.open(url, '_blank')
-    }
-
-
+        window.open(url, "_blank");
+    };
 
     return (
         <S.FeedContainer>
             <S.FeedBackground>
-                {feeds.map((feed) => (
-                    <S.FeedDetail key={feed.id} onClick={handleClick(feed.link)}>
+                {feeds.map((feed, index) => (
+                    <S.FeedDetail key={index} onClick={handleClick(feed.link)}>
                         <S.FeedMain>
-                            <S.Image src={feed.thumbnail ? feed.thumbnail : dthumbnail}></S.Image>
+                            <S.Image
+                                src={
+                                    feed.thumbnail ? feed.thumbnail : dthumbnail
+                                }
+                            ></S.Image>
                             <S.Title>{feed.title}</S.Title>
-                            <S.Description>{feed.description ? feed.description : defaultDescription}</S.Description>
+                            <S.Description>
+                                {feed.description
+                                    ? feed.description
+                                    : defaultDescription}
+                            </S.Description>
                             <S.HR />
                             <S.Channel>
                                 <S.FeedFooterLeft>
@@ -88,33 +86,38 @@ function Feed({type = 'ALL'}: FeedProps):React.ReactElement {
                 ))}
             </S.FeedBackground>
             <div ref={ref}></div>
-
         </S.FeedContainer>
     );
 }
 
 const S = {
-
     FeedLink: styled.a`
         text-decoration: none;
     `,
     FeedContainer: styled.div`
-        width: 100vw;
+        // width: 90vw;
+        margin-bottom: 50vh;
     `,
     FeedBackground: styled.div`
+        width: 90vw;
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-gap: 40px;
-        width: 80vw;
         margin: 0 auto;
+        grid-template-columns: repeat(1, 1fr);
+        grid-gap: 5px;
+
+        @media (min-width: 987px) and (max-width: 1335px) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @media (min-width: 1336px) {
+            grid-template-columns: repeat(3, 1fr);
+        }
     `,
 
     FeedFooterLeft: styled.div`
         display: flex;
         align-items: center;
     `,
-
-
 
     FeedFooterRight: styled.div`
         display: flex;
@@ -137,6 +140,7 @@ const S = {
         // height: 36.5vh;
         user-select: none;
         margin: 2rem auto;
+
         border: 1px solid #ffffff22;
         background-color: #282c34;
         background: linear-gradient(
@@ -155,12 +159,20 @@ const S = {
             box-shadow: 0 3.5px 25px 5px #000000aa;
             transform: scale(1.015);
         }
+
+        @media (max-width: 400px) {
+            width: 80vw;
+        }
     `,
     FeedMain: styled.div`
         display: flex;
         flex-direction: column;
         // width: 90%;
         padding: 1rem;
+        @media (max-width: 400px) {
+            justify-content: center;
+
+        }
     `,
 
     ChannelName: styled.div`
@@ -183,11 +195,16 @@ const S = {
         -webkit-box-orient: vertical;
         line-height: 1.3em;
         height: 2.4em;
+        margin: 2vh auto;
+        @media (max-width: 400px) {
+            font-size: 0.8rem;  
+            width: 70vw;
+        }
     `,
     Description: styled.p`
         text-align: start;
         font-size: max(0.8rem);
-        color: #CDCDCD;
+        color: #cdcdcd;
         width: 320px;
         font-family: "Elice-Light";
 
@@ -203,6 +220,11 @@ const S = {
         -webkit-box-orient: vertical;
         line-height: 1.2em;
         // max-height: 3.6em;
+        margin: 2vh auto;
+        @media (max-width: 400px) {
+            font-size: 0.6rem;
+            width: 70vw;   
+        }
     `,
     PubDate: styled.div`
         text-align: start;
@@ -248,7 +270,7 @@ const S = {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin: 1vh 0 2vh 0;
+        margin: 1vh auto 2vh auto;
     `,
 
     Image: styled.img`
@@ -260,6 +282,10 @@ const S = {
 
         background-size: cover;
         background-position: center;
+        margin: 0vh auto;
+        @media (max-width: 400px) {
+            width: 70vw;
+        }
     `,
 };
 

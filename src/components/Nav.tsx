@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
@@ -16,7 +15,7 @@ function Nav() {
 
 const S = {
     NavLogo: styled.img`
-        width: 15%;
+        width: 150px;
         margin: 0 auto;
         cursor: pointer;
     `,

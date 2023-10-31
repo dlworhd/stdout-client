@@ -18,10 +18,18 @@
 }
 
 
+@font-face {
+    font-family: "Misto";
+    font-size: 16px;
+    src: url("./fonts/misto/Misto.otf")
+}
+
+
 html {
-    font-family: "Elice";
+    font-family: "Elice-Light";
     min-height: 100vh;
     width: 100vw;
+
     /* height: 100%; */
     /* position: fixed; */
     margin: 0;
@@ -29,8 +37,11 @@ html {
     background-color: #171717;
 }
 
-
-
 *::-webkit-scrollbar  {
     display: none;
+}
+
+#root {
+    height: 90vh;
+    width: 100vw;
 }

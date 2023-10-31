@@ -1,23 +1,26 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-
-interface MenuProps {
-    currentPath: string;
-}
+import { useLocation } from 'react-router-dom';
 
 const menuList = [
-    { name: "All", path: "/all" },
-    { name: "Domestic", path: "/domestic" },
-    { name: "International", path: "/international" },
+    { name: "전체", path: "/" },
+    { name: "국내 소식", path: "/domestic" },
+    { name: "해외 소식", path: "/international" },
 ];
 
 function Menu() {
+
+    const location = useLocation();
+
+
     return (
         <S.MenuContainer>
             <S.MenuList>
-                {menuList.map((menu) => (
+                {menuList.map((menu, index) => (
                     <S.MenuItem
+                        key={index}
                         to={menu.path}
+                        style={menu.path === location.pathname ? { color: 'white' } : { color: '#696969'}}
                     >
                         {menu.name}
                     </S.MenuItem>
@@ -37,12 +40,11 @@ const S = {
         height: 10vh;
         margin: 10vh 0 0 0;
         padding: 0;
+        
     `,
 
     MenuItem: styled(Link)<{ isActive: boolean }>`
-        color: white;
         text-decoration: none;
-        // font-weight: ${(props: { isActive: boolean }) => props.isActive ? 600 : 100 };
 
         margin: 0 1vw;
         text-align: center;
@@ -50,6 +52,7 @@ const S = {
         &:hover {
             color: #93a79c;
         }
+
     `,
 };
 
