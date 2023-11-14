@@ -4,8 +4,8 @@ import { useLocation } from 'react-router-dom';
 
 const menuList = [
     { name: "전체", path: "/" },
-    { name: "국내 소식", path: "/domestic" },
-    { name: "해외 소식", path: "/international" },
+    { name: "국내", path: "/domestic" },
+    { name: "해외", path: "/international" },
 ];
 
 function Menu() {
