@@ -177,9 +177,9 @@ const S = {
 
     ChannelName: styled.div`
         text-align: start;
-        font-size: 0.8rem;
+        font-size: 1rem;
+        line-height: 100%;
         display: flex;
-        align-items: center;
         color: white;
         font-family: "Elice-Light";
     `,
@@ -260,10 +260,10 @@ const S = {
         // width: 90%
         border-radius: 100%;
         // border: 1px solid #ffffff22;
-        width: 1.4rem;
-        height: 1.4rem;
+        width: 20px;
+        height: 20px;
         object-fit: cover;
-        margin: 0 0.5vw 0 0;
+        margin: 0 8px 0 0;
     `,
 
     FeedInfo: styled.div`
