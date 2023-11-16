@@ -22,9 +22,10 @@ interface FeedProps {
 function Feed({ type = "ALL" }: FeedProps): React.ReactElement {
     const size = 6;
     const [page, setPage] = useState(0);
+    const [maxPage, setMaxPage] = useState(0);
     const [feeds, setFeeds] = useState<FeedType[]>([]);
     const [ref, inView] = useInView();
-    const defaultDescription = "궁금하시다면 링크를 클릭해보세요!";
+    const defaultDescription = "If you're curious, click the link!";
 
     useEffect(() => {
         const fetchFeeds = (pageNumber: number) => {
@@ -37,16 +38,19 @@ function Feed({ type = "ALL" }: FeedProps): React.ReactElement {
                     const newFeeds = response.data.content;
                     setFeeds((prevFeeds) => [...prevFeeds, ...newFeeds]);
                     setPage(pageNumber + 1);
+                    console.log(response.data.totalPages);
+                    
+                    setMaxPage(response.data.totalPages);
                 });
         };
-        if (inView && page === 0) {
-            // 초기 로딩 시에만 실행
-            fetchFeeds(page);
-        } else if (inView && page > 0) {
-            // 스크롤 시에 실행
+
+        if (inView && (page >= 0 && page <= maxPage)) {
+            // 스크롤 시 실행
             fetchFeeds(page);
         }
+
     }, [inView, page, type]);
+
     const handleClick = (url: string) => () => {
         window.open(url, "_blank");
     };
@@ -84,8 +88,9 @@ function Feed({ type = "ALL" }: FeedProps): React.ReactElement {
                         </S.FeedMain>
                     </S.FeedDetail>
                 ))}
-            </S.FeedBackground>
             <div ref={ref}></div>
+
+            </S.FeedBackground>
         </S.FeedContainer>
     );
 }
@@ -171,7 +176,6 @@ const S = {
         padding: 1rem;
         @media (max-width: 400px) {
             justify-content: center;
-
         }
     `,
 
@@ -197,7 +201,7 @@ const S = {
         height: 2.4em;
         margin: 2vh auto;
         @media (max-width: 400px) {
-            font-size: 0.8rem;  
+            font-size: 0.8rem;
             width: 70vw;
         }
     `,
@@ -223,7 +227,7 @@ const S = {
         margin: 2vh auto;
         @media (max-width: 400px) {
             font-size: 0.6rem;
-            width: 70vw;   
+            width: 70vw;
         }
     `,
     PubDate: styled.div`
