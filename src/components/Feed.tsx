@@ -3,9 +3,10 @@ import styled from "styled-components";
 import instance from "../util/CustomAxios";
 import { useInView } from "react-intersection-observer";
 import dthumbnail from "../../src/images/default-thumbnail.png";
+import { useQuery } from "react-query";
 interface FeedType {
     id: number;
-    channelName: string;
+    channelSubname: string;
     // channelLink: string;
     channelIcon: string;
     channelItemTitle: string;
@@ -28,16 +29,19 @@ function Feed({ type = "ALL" }: FeedProps): React.ReactElement {
     const defaultDescription = "If you're curious, click the link!";
 
     useEffect(() => {
-        const fetchFeeds = (pageNumber: number) => {
+        const fetchFeeds = (page: number, size: number) => {
             instance
                 .get(
-                    `/v1/items?size=${size}&page=${pageNumber}&type=${type.toString()}`
+                    `/v1/items?size=${size}&page=${page}&type=${type}`
                 )
                 .then((response) => {
+                    
+
+                    // useQuery([],data)
                     console.log(response);
                     const newFeeds = response.data.content;
                     setFeeds((prevFeeds) => [...prevFeeds, ...newFeeds]);
-                    setPage(pageNumber + 1);
+                    setPage(page + 1);
                     console.log(response.data.totalPages);
                     
                     setMaxPage(response.data.totalPages);
@@ -46,7 +50,7 @@ function Feed({ type = "ALL" }: FeedProps): React.ReactElement {
 
         if (inView && (page >= 0 && page <= maxPage)) {
             // 스크롤 시 실행
-            fetchFeeds(page);
+            fetchFeeds(page, size);
         }
 
     }, [inView, page, type]);
@@ -76,9 +80,9 @@ function Feed({ type = "ALL" }: FeedProps): React.ReactElement {
                             <S.Channel>
                                 <S.FeedFooterLeft>
                                     <S.ChannelIcon src={feed.channelIcon} />
-                                    <S.ChannelName>
-                                        {feed.channelName}
-                                    </S.ChannelName>
+                                    <S.channelSubname>
+                                        {feed.channelSubname}
+                                    </S.channelSubname>
                                 </S.FeedFooterLeft>
                                 <S.FeedFooterRight>
                                     <S.PubDate>{feed.pubDate}</S.PubDate>
@@ -179,7 +183,7 @@ const S = {
         }
     `,
 
-    ChannelName: styled.div`
+    channelSubname: styled.div`
         text-align: start;
         font-size: 1rem;
         line-height: 100%;
