@@ -6,12 +6,12 @@ import dthumbnail from "../../src/images/default-thumbnail.png";
 interface FeedType {
     id: number;
     channelName: string;
-    channelLink: string;
+    // channelLink: string;
     channelIcon: string;
-    title: string;
-    thumbnail: string;
-    description: string;
-    link: string;
+    channelItemTitle: string;
+    channelItemThumbnail: string;
+    channelItemDescription: string;
+    channelItemLink: string;
     pubDate: string;
 }
 
@@ -31,7 +31,7 @@ function Feed({ type = "ALL" }: FeedProps): React.ReactElement {
         const fetchFeeds = (pageNumber: number) => {
             instance
                 .get(
-                    `/v1/feeds?size=${size}&page=${pageNumber}&type=${type.toString()}`
+                    `/v1/items?size=${size}&page=${pageNumber}&type=${type.toString()}`
                 )
                 .then((response) => {
                     console.log(response);
@@ -59,17 +59,17 @@ function Feed({ type = "ALL" }: FeedProps): React.ReactElement {
         <S.FeedContainer>
             <S.FeedBackground>
                 {feeds.map((feed, index) => (
-                    <S.FeedDetail key={index} onClick={handleClick(feed.link)}>
+                    <S.FeedDetail key={index} onClick={handleClick(feed.channelItemLink)}>
                         <S.FeedMain>
                             <S.Image
                                 src={
-                                    feed.thumbnail ? feed.thumbnail : dthumbnail
+                                    feed.channelItemThumbnail ? feed.channelItemThumbnail : dthumbnail
                                 }
                             ></S.Image>
-                            <S.Title>{feed.title}</S.Title>
+                            <S.Title>{feed.channelItemTitle}</S.Title>
                             <S.Description>
-                                {feed.description
-                                    ? feed.description
+                                {feed.channelItemDescription
+                                    ? feed.channelItemDescription
                                     : defaultDescription}
                             </S.Description>
                             <S.HR />
